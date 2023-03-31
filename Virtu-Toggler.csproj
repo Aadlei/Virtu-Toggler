@@ -6,13 +6,13 @@
     <RootNamespace>Virtu_Toggler</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>virtu.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <ApplicationManifest>rsc\app.manifest</ApplicationManifest>
+    <ApplicationIcon>rsc\virtu.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="virtu.ico" />
+    <Content Include="rsc\virtu.ico" />
   </ItemGroup>
 
   <ItemGroup>
