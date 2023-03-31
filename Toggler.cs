@@ -10,11 +10,12 @@ namespace Virtu_Toggler
 {
     internal class VirtuChanger
     {
-        public static void Enabler()
+        // Main function that toggles virtualization on or off depending on "mode".
+        public static void Toggler(string mode)
         {
-            Console.WriteLine("Running bcdedit...");
+            Console.WriteLine("Running bcdedit.");
 
-            // Creates a new process to set hypervisor to auto.
+            // Creates a new process to set hypervisor to on/off.
             Process p = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo();
 
@@ -24,9 +25,20 @@ namespace Virtu_Toggler
             startInfo.RedirectStandardError = true;
             startInfo.Verb = "runas";
             startInfo.FileName = @"CMD.EXE";
-            startInfo.Arguments = @"/C bcdedit /set hypervisorlaunchtype auto";
 
-            Console.WriteLine("Setting 'hypervisorlaunchtype' to auto...");
+            // If mode is 1, disable virt. 
+            if(mode == "1")
+            {
+                startInfo.Arguments = @"/C bcdedit /set hypervisorlaunchtype off";
+                Console.WriteLine("Setting 'hypervisorlaunchtype' to off..");
+            }
+            // If mode is 0, enable virt.
+            else if (mode == "0")
+            {
+                startInfo.Arguments = @"/C bcdedit /set hypervisorlaunchtype auto";
+                Console.WriteLine("Setting 'hypervisorlaunchtype' to auto..");
+            } 
+            
             p.StartInfo = startInfo;
             p.Start();
             string output = p.StandardOutput.ReadToEnd();
@@ -37,17 +49,31 @@ namespace Virtu_Toggler
             Console.WriteLine("Checking if the setting has been changed...");
             bool setting = BcdChecker();
 
-            if(setting)
+            // So if the settings are different, that means it has changed successfully.
+            if (setting.ToString() != mode)
             {
                 Console.WriteLine("Successfully changed attribute!");
                 var ps = PowerShell.Create();
-                ps.AddScript("reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Control\\DeviceGuard\\Scenarios\\HypervisorEnforcedCodeIntegrity\" /v \"Enabled\" /t REG_DWORD /d 1 /f").Invoke();
-            } else
+
+                // Statements for setting powershell script to turn registry key on / off
+                if (mode == "1")
+                {
+                    ps.AddScript("reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Control\\DeviceGuard\\Scenarios\\HypervisorEnforcedCodeIntegrity\" /v \"Enabled\" /t REG_DWORD /d 0 /f").Invoke();
+                    PSErrorCheck(ps);
+                    Console.WriteLine("Successfully turned off virtualization! Restart your computer.");
+                } else if(mode == "0")
+                {
+                    ps.AddScript("reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Control\\DeviceGuard\\Scenarios\\HypervisorEnforcedCodeIntegrity\" /v \"Enabled\" /t REG_DWORD /d 1 /f").Invoke();
+                    PSErrorCheck(ps);
+                    Console.WriteLine("Successfully turned on virtualization! Restart your computer.");
+                }
+            }
+            else
             {
                 Console.WriteLine("Failed to change attribute, did you run with administrator privileges?");
             }
-
         }
+
 
         // Function that checks if hypervisorlaunchtype is on or off, returns either 0 or 1.
         public static bool BcdChecker()
@@ -75,7 +101,7 @@ namespace Virtu_Toggler
                 var value = line.Substring(24).Replace(" ", string.Empty);
                 if (key == "hypervisorlaunchtype")
                 {
-                    Console.WriteLine("Found key, checking if it is correct...");
+                    Console.WriteLine("Found key, checking if it is correct....");
                     if (value == "Auto")
                     {
                         c.Close();
@@ -90,6 +116,19 @@ namespace Virtu_Toggler
             }
             c.Close();
             return false;
+        }
+
+        // Function for checking if the powershell script returned any errors.
+        public static void PSErrorCheck(PowerShell ps)
+        {
+            if (ps.HadErrors)
+            {
+                foreach (var error in ps.Streams.Error)
+                {
+                    Console.WriteLine(error.ToString());
+                    break;
+                }
+            }
         }
     }
 }

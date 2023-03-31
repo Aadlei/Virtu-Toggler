@@ -9,22 +9,18 @@ try
     ps.AddScript("(Get-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Control\\DeviceGuard\\Scenarios\\HypervisorEnforcedCodeIntegrity\")");
     var result = ps.Invoke();
 
-    // If the script has errors, it will be printed here.
-    if (ps.HadErrors)
-    {
-        foreach (var error in ps.Streams.Error)
-        {
-            Console.WriteLine(error.ToString());
-            break;
-        }
-    }
+    // Runs function that checks if the script gave off errors
+    VirtuChanger.PSErrorCheck(ps);
+
     string decision = "";
+    string mode = "";
     // Iterates through results, to find if "Enabled" is 1 or 0.
     foreach (PSObject value in result)
     {
         object enabled = value.Properties["Enabled"].Value;
         if (enabled.ToString() == "1")
         {
+            mode = enabled.ToString();
             // If virtualization is enabled.
             Console.WriteLine("Virtualization is turned on, do you wish to turn it off? (y/n)");
             decision = Console.ReadLine();
@@ -43,11 +39,12 @@ try
             // Disable virtualization
             else
             {
-                /*VirtuChanger.Disabler();*/
+                VirtuChanger.Toggler(mode);
             }
         }
         else if (enabled.ToString() == "0")
         {
+            mode = enabled.ToString();
             // If virtualization is disabled.
             Console.WriteLine("Virtualization is turned off, do you wish to turn it on? (y/n)");
             decision = Console.ReadLine();
@@ -66,7 +63,7 @@ try
             // Enable virtualization.
             else
             {
-                VirtuChanger.Enabler();
+                VirtuChanger.Toggler(mode);
             }
         }
     }
