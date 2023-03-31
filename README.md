@@ -1,7 +1,7 @@
 # Virtu-Toggler
 ## What is this?
 Virtu-Toggler is a program that toggles on / off **'hypervisorlaunchtype'** by using *bcdedit* and sets **'HypervisorEnforcedCodeIntegrity'** to enabled or disabled via Registry. 
-The project aims to assist solving a recurring problems with Anti-Cheat systems such as *"FACEIT AC"* and *"VALORANT Anti-Cheat"* by turning off virtualization. 
+The project aims to assist solving a recurring problem with Anti-Cheat systems such as *"FACEIT AC"* and *"VALORANT Anti-Cheat"* by turning off virtualization. 
 The Anti-Cheats tend to prohibit virtualization to counter hackers that use VM as a way to use their cheats. Not everyone who uses VM cheats obviously, so they (me included) tend to get annoyed by being blocked out because of that.
 It usually is a hassle turning on and off virtualization all the time, especially for people who love playing competitive games and also do a ton of virtualization work (Docker, VMWare, WSL etc). 
 The program is written in C# using wpf with the .NET version 7.
