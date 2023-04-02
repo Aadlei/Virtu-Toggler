@@ -11,7 +11,7 @@ The program is written in C# using wpf with the .NET version 7.
 The computer will **_require_** a restart after the program has been run, so the changes get applied.
 
 ## How do I use this program?
-You can either build it in Visual Studio, or you can open it directly by extracting 'bin/Release' and then run the executable. 
+You can either build it in Visual Studio, or you can download the full release on the right sidebar.  I couldn't compile everything to one file, as it is not supported by the powershell package.
 ## What is in the project?
 The project has a main Program.cs file along with a class file called Toggler.cs (where I keep most of my methods). 
 
